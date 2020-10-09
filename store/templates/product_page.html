@@ -1,0 +1,273 @@
+{% extends 'base.html' %} {% load static %} {% block title %} Product
+{%endblock%} {% block content %}
+<section class="container pt-5">
+  <section class="mb-5">
+    <div class="row">
+      <div class="col-md-6 mb-4 mb-md-0">
+        <div id="mdb-lightbox-ui"></div>
+
+        <div class="mdb-lightbox">
+          <div class="row product-gallery mx-1">
+            <div class="col-12 my-2">
+              <figure class="view overlay rounded z-depth-1 main-img">
+                <a href="{{product.image.url}}" data-size="710x823">
+                  <img
+                    src="{{product.image.url}}"
+                    class="img-fluid z-depth-1"
+                  />
+                </a>
+              </figure>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6 mt-3">
+        <h5>{{product.name}}</h5>
+        <p class="mb-2 text-muted text-uppercase small">
+          {{product.category.name}}
+        </p>
+        {% if product.rating > 0 %}
+        <div class="Stars mt-0 mb-3" style="--rating: {{product.rating}};--size: 24px" aria-label="Rating"></div>
+        {% endif %}
+        <h6><span class="rupee">&#x20B9</span>{{product.price}}</h6>
+        <p class="pt-1">{{product.description}}</p>
+        <div class="table-responsive">
+          <table class="table table-sm table-borderless mb-0">
+            <tbody>
+              <tr>
+                <th class="pl-0 w-25" scope="row"><strong>Model</strong></th>
+                <td>{{product.name}}</td>
+              </tr>
+              <tr>
+                <th class="pl-0 w-25" scope="row"><strong>Company</strong></th>
+                <td>{{product.comapny.name}}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <hr />
+        {% if product.stock <= 0 %}
+        <p class="text-justify product_text"><b>Out of Stock!</b></p>
+        {% else %}
+        <div class="table-responsive mb-2">
+          <table class="table table-sm table-borderless">
+            <tbody>
+              <tr>
+                <td class="pl-0 pb-0 w-25">Quantity</td>
+              </tr>
+              <tr>
+                <td class="pl-0">
+                  <form class="d-flex align-items-center" action="{% url 'change_cart' product.id %}" method="get">
+                  <div class="def-number-input number-input safari_only mb-0 d-inline-flex align-items-center mr-5" style="height: 40px;">
+                    <button
+                    type="button"
+                      onclick="this.parentNode.querySelector('input[type=number]').stepDown()"
+                      class="minus"
+                    ></button>
+                    <input
+                      class="quantity"
+                      min="0"
+                      name="addQuantity"
+                      value="1"
+                      type="number"
+                    />
+                    <button
+                      type="button"
+                      onclick="this.parentNode.querySelector('input[type=number]').stepUp()"
+                      class="plus"
+                    ></button>
+                  </div>
+                  <button type="submit" class="btn btn-primary btn-md">
+                      <i class="fas fa-shopping-cart pr-2"></i>Add to cart
+                    </button>
+                </form>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        
+        {% endif %}
+      </div>
+    </div>
+  </section>
+</section>
+<div class="classic-tabs container pb-5">
+  <ul class="nav tabs-primary nav-justified" id="advancedTab" role="tablist">
+    <li class="nav-item">
+      <a
+        class="nav-link active show"
+        id="description-tab"
+        data-toggle="tab"
+        href="#description"
+        role="tab"
+        aria-controls="description"
+        aria-selected="true"
+        >Description</a
+      >
+    </li>
+    <li class="nav-item">
+      <a
+        class="nav-link"
+        id="info-tab"
+        data-toggle="tab"
+        href="#info"
+        role="tab"
+        aria-controls="info"
+        aria-selected="false"
+        >Information</a
+      >
+    </li>
+    <li class="nav-item">
+      <a
+        class="nav-link"
+        id="reviews-tab"
+        data-toggle="tab"
+        href="#reviews"
+        role="tab"
+        aria-controls="reviews"
+        aria-selected="false"
+        >Reviews ({{reviews_num}})</a
+      >
+    </li>
+  </ul>
+  <div class="tab-content" id="advancedTabContent">
+    <div
+      class="tab-pane fade show active"
+      id="description"
+      role="tabpanel"
+      aria-labelledby="description-tab"
+    >
+      <h5>Product Description</h5>
+      <p class="small text-muted text-uppercase mb-2">{{product.category.name}}</p>
+      {% if product.rating > 0 %}
+        <div class="Stars mt-0 mb-3" style="--rating: {{product.rating}};--size:32px" aria-label="Rating"></div>
+        {% endif %}
+        <h6><span class="rupee">&#x20B9</span>{{product.price}}</h6>
+      <p class="pt-1">
+        {{product.description}}
+      </p>
+    </div>
+    <div
+      class="tab-pane fade"
+      id="info"
+      role="tabpanel"
+      aria-labelledby="info-tab"
+    >
+      <h5>Additional Information</h5>
+      <table class="table table-striped table-bordered mt-3">
+        <thead>
+          <tr>
+            <th scope="row" class="w-150 dark-grey-text h6">Weight</th>
+            <td><em>0.3 kg</em></td>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row" class="w-150 dark-grey-text h6">Dimensions</th>
+            <td><em>50 × 60 cm</em></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div
+      class="tab-pane fade"
+      id="reviews"
+      role="tabpanel"
+      aria-labelledby="reviews-tab"
+    >
+      {% if reviews %}
+      <h5><span>{{reviews_num}}</span> review for <span>Fantasy T-shirt</span></h5>
+      {% for review in reviews %}
+      <div class="media mt-3 mb-4">
+        <img
+          class="d-flex mr-3 z-depth-1"
+          src="https://mdbootstrap.com/img/Photos/Others/placeholder1.jpg"
+          width="62"
+          alt="Generic placeholder image"
+        />
+        <div class="media-body">
+          <div class="d-flex justify-content-between">
+            <p class="mt-0 mb-2">
+              <strong>{{review.user.username}} </strong>
+              <span>– </span><span>{{review.created}}</span>
+            </p>
+            <div class="Stars" style="--rating: {{review.rating}};--size: 24px;" aria-label="Rating of this product is 4 out of 5."></div>
+          </div>
+          <p class="mb-0">{{review.content}}</p>
+        </div>
+      </div>
+      {% endfor %}
+      {% else %}
+        <h5 style="text-align: center;">There are no reviews yet!!</h5>
+      {% endif %}
+      {% if can_review == True %}
+      <h5 class="mt-4">Add a review</h5>
+      <form method="post" class="my-3">
+        {% csrf_token %}
+        <div class="rating">
+          <input type="radio" class="rating__control"
+              id="rating-input-1-5" name="rating" value="1" required>
+          <input type="radio" class="rating__control"
+          id="rating-input-1-4" name="rating" value="2" required>
+          <input type="radio" class="rating__control"
+          id="rating-input-1-3" name="rating" value="3" required>
+          <input type="radio" class="rating__control"
+          id="rating-input-1-2" name="rating" value="4" required>
+          <input type="radio" class="rating__control"
+          id="rating-input-1-1" name="rating" value="5" required>
+          <label for="rating-input-1-5" class="rating__item">
+            <svg class="rating__star">
+              <use xlink:href="#star"></use>
+            </svg>
+          </label>
+          <label for="rating-input-1-4" class="rating__item">
+            <svg class="rating__star">
+              <use xlink:href="#star"></use>
+            </svg>
+          </label>
+          <label for="rating-input-1-3" class="rating__item">
+            <svg class="rating__star">
+              <use xlink:href="#star"></use>
+            </svg>
+          </label>
+          <label for="rating-input-1-2" class="rating__item">
+            <svg class="rating__star">
+              <use xlink:href="#star"></use>
+            </svg>
+          </label>
+          <label for="rating-input-1-1" class="rating__item">
+            <svg class="rating__star">
+              <use xlink:href="#star"></use>
+            </svg>
+          </label>
+      </div>
+        <div class="md-form md-outline">
+          <textarea
+            name="content"
+            class="md-textarea form-control pr-6"
+            id="content"
+            rows="4"
+            required
+          ></textarea>
+          <label for="content">Your review</label>
+        </div>
+        <div class="text-right pb-2">
+          <button type="submit" class="btn btn-primary">Add a review</button>
+        </div>
+      </form>
+      {% endif %}
+    </div>
+  </div>
+</div>
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none">
+  <symbol id="star" viewBox="0 0 26 28">
+    <path d="M26 10.109c0 .281-.203.547-.406.75l-5.672 5.531 1.344 7.812c.016.109.016.203.016.313 0 .406-.187.781-.641.781a1.27 1.27 0 0 1-.625-.187L13 21.422l-7.016 3.687c-.203.109-.406.187-.625.187-.453 0-.656-.375-.656-.781 0-.109.016-.203.031-.313l1.344-7.812L.39 10.859c-.187-.203-.391-.469-.391-.75 0-.469.484-.656.875-.719l7.844-1.141 3.516-7.109c.141-.297.406-.641.766-.641s.625.344.766.641l3.516 7.109 7.844 1.141c.375.063.875.25.875.719z"/>
+  </symbol>
+</svg>
+<script>
+  if ( window.history.replaceState ) {
+    window.history.replaceState( null, null, window.location.href );
+  }
+</script>
+{% endblock %}

@@ -1,0 +1,366 @@
+{% extends 'base.html' %} {% load static %} {% block title %} Cart {% endblock%}
+{% block content %}
+<style>
+  html {
+    scroll-behavior: smooth;
+   }
+</style>
+{% if not cart_items %} 
+<section style="text-align: center;">
+  <h2 class="product_title my-5">Your shopping cart is empty</h2> <a href="{% url 'home' %}" class="btn btn-primary">Continue Shopping</a>
+</section>
+{% else %}
+<section class="mt-5 mb-4 container">
+  <div class="row">
+    <div id="csss" class="col-lg-8">
+      <div class="card wish-list mb-4">
+        <div class="card-body">
+          <h5 class="mb-4">Cart (<span>{{counter}}</span> items)</h5> {% for cart_item in cart_items %}
+          <div class="row mb-4">
+            <div class="col-md-5 col-lg-3 col-xl-3">
+              <div class="view zoom overlay z-depth-1 rounded mb-3 mb-md-0">
+                <img
+                  class="img-fluid w-100"
+                  src="{{cart_item.product.image.url}}"
+                  alt="Sample"
+                />
+              </div>
+            </div>
+            <div class="col-md-7 col-lg-9 col-xl-9">
+              <div>
+                <div class="d-flex justify-content-between">
+                  <div>
+                    <h5>{{cart_item.product.name}}</h5>
+                    <p class="mb-2 text-muted text-uppercase small">
+                      {{cart_item.product.category.name}} |
+                      {{cart_item.product.company.name}}
+                    </p>
+                    <p class="mb-1 text-muted text-uppercase small">
+                      Unit Price :  <span class="rupee">&#x20B9</span>{{cart_item.product.price}}
+                    </p>
+                    <p class="mb-3 text-muted text-uppercase small">
+                      Qty: {{cart_item.quantity}} x <span class="rupee">&#x20B9</span>{{cart_item.product.price}}
+                    </p>
+                  </div>
+                  <div>
+                    <div
+                      class="def-number-input number-input safari_only mb-0 w-100"
+                    >
+                      <a href="{% url 'change_cart' cart_item.product.id %}?subQuantity=1">
+                        <button class="minus"></button>
+                      </a>
+                      <input
+                        class="quantity"
+                        min="0"
+                        name="quantity"
+                        value="{{cart_item.quantity}}"
+                        type="number"
+                      />
+                      {% if cart_item.quantity < cart_item.product.stock %}
+                      <a href="{% url 'change_cart' cart_item.product.id %}?addQuantity=1">
+                        <button class="plus"></button>
+                      </a>
+                      {% else %}
+                      <button class="plus" disabled></button>
+                      {% endif %}
+                    </div>
+                    <small
+                      id="passwordHelpBlock"
+                      class="form-text text-muted text-center"
+                    >
+                      {% if cart_item.quantity == 1 %}
+                      (Quantity: {{cart_item.quantity}} piece)
+                      {% else %}
+                      (Quantity: {{cart_item.quantity}} pieces)
+                      {% endif %}
+                    </small>
+                  </div>
+                </div>
+                <div class="d-flex justify-content-between align-items-center">
+                  <div>
+                    <a
+                      href="{% url 'change_cart' cart_item.product.id %}?subQuantity={{cart_item.quantity}}"
+                      type="button"
+                      class="card-link-secondary small text-uppercase mr-3"
+                      ><i class="fas fa-trash-alt mr-1"></i> Remove item
+                    </a>
+                    <a
+                      href="#!"
+                      type="button"
+                      class="card-link-secondary small text-uppercase"
+                      ><i class="fas fa-heart mr-1"></i> Move to wish list
+                    </a>
+                  </div>
+                  <p class="mb-0">
+                    <span
+                      ><strong
+                        >Sub Total : <span class="rupee">&#x20B9</span>{{cart_item.sub_total}}</strong
+                      ></span
+                    >
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+          {% if not forloop.last %}
+          <hr class="mb-4" />
+          {% endif %} {% endfor %}
+          <p class="text-primary mb-0">
+            <i class="fas fa-info-circle mr-1"></i> Do not delay the purchase,
+            adding items to your cart does not mean booking them.
+          </p>
+        </div>
+      </div>
+    </div>
+    <div id="css" class="col-lg-4">
+      <div class="card mb-4">
+        <span class="card-body">
+          <h5 class="mb-3">The total amount of</h5>
+
+          <ul class="list-group list-group-flush">
+            <li
+              class="list-group-item d-flex justify-content-between align-items-center border-0 px-0 pb-0"
+            >
+              Total amount
+              <span><span class="rupee">&#x20B9</span>{{total}}</span>
+            </li>
+            <li
+              class="list-group-item d-flex justify-content-between align-items-center px-0"
+            >
+              Shipping
+              <span><span class="rupee">&#x20B9</span>0</span>
+            </li>
+            <li
+              class="list-group-item d-flex justify-content-between align-items-center border-0 px-0 mb-3"
+            >
+              <div>
+                <strong>The total amount of</strong>
+                <strong>
+                  <p class="mb-0">(including VAT)</p>
+                </strong>
+              </div>
+              <span><strong><span class="rupee">&#x20B9</span>{{total}}</strong></span>
+            </li>
+          </ul>
+
+          {% if user.is_authenticated %}
+          <button
+            type="button"
+            id="checkoutBtn"
+            class="btn btn-primary btn-block waves-effect waves-light"
+            onclick="myFunction()"
+          >
+            go to checkout
+          </button>
+          {% else %}
+          <span class="material-tooltip-main" tabindex="0" data-toggle="tooltip" title="You need to be Authenticated!!">
+          <button
+            type="button"
+            class="btn btn-primary btn-block waves-effect waves-light"
+            style="pointer-events: none;outline: none;" type="button" disabled
+          >
+            go to checkout
+          </button>
+        </span>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endif %}
+<section id="cs" class="mt-5 mb-4 container make-invisible">
+  <div class="row">
+    <div class="col-lg-8 mb-4">
+      <div class="card wish-list pb-1">
+        
+        <form id="checkout-form" {% if not shipping_address %}class="card-body"{% else %}class="card-body make-invisible "{% endif %}>
+        {% csrf_token %} 
+          <h5 class="mb-2">Shipping details</h5>
+          {% for field in checkoutForm %}
+                {% if field.html_name == 'shipping_country' %}
+                <div class="d-flex flex-wrap mb-n4 mt-n4">
+                  <div class="select-outline position-relative w-100">
+                    {{ field }}
+                    <label>{{ field.label }}</label>
+                  </div>
+                </div>
+                {% else %}
+                <div class="md-form md-outline">
+                  {{ field }}
+                  <label
+                    for="{{ field.id_for_label }}"
+                    data-error="field.errors"
+                    data-success="!field.errors"
+                    >{{ field.label }}</label
+                  >
+                </div>
+                {% endif%}
+                {% endfor %}
+        </form>
+        <div id="checkout-address"  {% if shipping_address %}class="card-body"{% else %}class="card-body make-invisible "{% endif %}>
+          <h5 class="mb-2">Shipping details</h5>
+          <p class="small text-muted text-uppercase mb-1">Full Name : <span class="text-primary">{{shipping_address.full_name}}</span></p>
+          <p class="small text-muted text-uppercase mb-1">Phone : <span class="text-primary">{{shipping_address.phone}}</span></p>
+          <p class="small text-muted text-uppercase mb-1">Address1 : <span class="text-primary">{{shipping_address.shipping_address1}}</span></p>
+          <p class="small text-muted text-uppercase mb-1">Address2 : <span class="text-primary">{{shipping_address.shipping_address2}}</span></p>
+          <p class="small text-muted text-uppercase mb-1">City : <span class="text-primary">{{shipping_address.shipping_city}}</span></p>
+          <p class="small text-muted text-uppercase mb-1">State : <span class="text-primary">{{shipping_address.shipping_state}}</span></p>
+          <p class="small text-muted text-uppercase mb-1">Country Code : <span class="text-primary">{{shipping_address.shipping_country}}</span></p>
+          <p class="small text-muted text-uppercase mb-1">Postcode / ZIP : <span class="text-primary">{{shipping_address.shipping_zip}}</span></p>
+          <button id="edit-btn" class="btn btn-primary btn-rounded btn-sm mt-1"><i class="fas fa-marker mr-1"></i> Edit</button>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-4">
+      <div class="card mb-4">
+        <div class="card-body">
+          <h5 class="mb-3">The total amount of</h5>
+
+          <div class="list-group list-group-flush">
+            <li
+              class="list-group-item d-flex justify-content-between align-items-center border-0 px-0 pb-0"
+            >
+              Total Ammount
+              <span><span class="rupee">&#x20B9</span>{{total}}</span>
+            </li>
+            <li
+              class="list-group-item d-flex justify-content-between align-items-center px-0"
+            >
+              Shipping
+              <span><span class="rupee">&#x20B9</span>0</span>
+            </li>
+            <li
+              class="list-group-item d-flex justify-content-between align-items-center border-0 px-0 mb-3"
+            >
+              <div>
+                <strong>The total amount of</strong>
+                <strong>
+                  <p class="mb-0">(including VAT)</p>
+                </strong>
+              </div>
+              <span><strong><span class="rupee">&#x20B9</span>{{total}}</strong></span>
+            </li>
+          </div>
+          <button
+            type="button"
+            id="checkout-button"
+            class="btn btn-primary btn-block waves-effect waves-light"
+          >
+            Make purchase
+          </button>
+        </div>
+      </div>
+      <div class="card mb-4">
+        <div class="card-body">
+          <a
+            class="dark-grey-text d-flex justify-content-between"
+            data-toggle="collapse"
+            href="#collapseExample"
+            aria-expanded="false"
+            aria-controls="collapseExample"
+          >
+            Add a discount code (optional)
+            <span><i class="fas fa-chevron-down pt-1"></i></span>
+          </a>
+
+          <div class="collapse" id="collapseExample">
+            <div class="mt-3">
+              <div class="md-form md-outline mb-0">
+                <input
+                  type="text"
+                  id="discount-code"
+                  class="form-control font-weight-light"
+                  placeholder="Enter discount code"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<script
+      type="text/javascript"
+      src="{% static 'js/jquery-3.4.1.min.js' %}"
+    ></script>
+<script>
+  function myFunction() {
+    var element = document.getElementById("cs");
+    element.classList.remove("make-invisible");
+    var element1 = document.getElementById("css");
+    element1.classList.add("make-invisible");
+    const link = document.createElement("a");
+    link.href = "#cs";
+    link.click();
+    var element3 = document.getElementById("csss");
+    element3.classList.remove("col-lg-8");
+    element3.classList.add("col-lg-12");
+  }
+</script>
+<script>
+  $("#edit-btn").click(function(){
+    $("#checkout-address").addClass("make-invisible")
+    $("#checkout-form").removeClass("make-invisible")
+  })
+</script>
+<script src="https://js.stripe.com/v3/"></script>
+<script>
+  $("#checkout-button").click(function () {
+    if($( "#checkout-form" ).hasClass( "make-invisible" )){
+      fetch("/payment", {
+        method: "GET",
+      })
+      .then(function(response) {
+        console.log("no form")
+        return response.json();
+      })
+      .then(function (session) {
+        var stripe = Stripe(session.key);
+        return stripe.redirectToCheckout({ sessionId: session.id });
+      })
+      .then(function (result) {
+        if (result.error) {
+          alert(result.error.message);
+        }
+      })
+      .catch(function(error) {
+        console.log(error)
+      });
+    }else{
+      var serializedData = $("#checkout-form").serialize();
+      $.ajax({
+          type: 'POST',
+          url: "{% url 'shipping_details' %}",
+          data: serializedData,
+          success: function (response) {
+            console.log(response)
+            fetch("/payment", {
+              method: "GET",
+            })
+              .then(function (response) {
+                console.log("form")
+                return response.json();
+              })
+              .then(function (session) {
+                var stripe = Stripe(session.key);
+                return stripe.redirectToCheckout({ sessionId: session.id });
+              })
+              .then(function (result) {
+                if (result.error) {
+                  alert(result.error.message);
+                }
+              })
+              .catch(function (error) {
+                console.log(error)
+              });
+          },
+          error: function (response) {
+              alert("fill in the form!!");
+          }
+      })
+    }
+})
+</script>
+{% endblock %}

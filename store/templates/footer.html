@@ -1,0 +1,70 @@
+<footer class="page-footer font-small elegant-color mt-3">
+  <div class="container text-center text-md-left pt-4 pt-md-5">
+    <div class="row mt-1 mt-md-0 mb-4 mb-md-0">
+      <div class="col-md-3 mx-auto mt-3 mt-md-0 mb-0 mb-md-4">
+        <h5>About Us</h5>
+        <hr class="color-primary mb-4 mt-0 d-inline-block mx-auto w-60" />
+        <p class="foot-desc mb-0">
+          I made this website using Django Framework, MDB Bootstrap and Payments
+          are done using Stripe
+        </p>
+      </div>
+      <hr class="clearfix w-100 d-md-none" />
+      <div class="col-md-3 mx-auto mt-3 mt-md-0 mb-0 mb-md-4">
+        <h5>Categories</h5>
+        <hr class="color-primary mb-4 mt-0 d-inline-block mx-auto w-60" />
+        <ul class="list-unstyled foot-desc">
+          {% for link in links %}
+          <li class="mb-2">
+            <a href="{{link.get_url}}">{{link.name}}</a>
+          </li>
+          {% endfor %}
+        </ul>
+      </div>
+      <hr class="clearfix w-100 d-md-none" />
+      <div class="col-md-3 mx-auto mt-3 mt-md-0 mb-0 mb-md-4">
+        <h5>Useful links</h5>
+        <hr class="color-primary mb-4 mt-0 d-inline-block mx-auto w-60" />
+
+        <ul class="list-unstyled foot-desc">
+          <li class="mb-2">
+            <a href="{% url 'contact' %}">Contact Us</a>
+          </li>
+          <li class="mb-2">
+            <a href="{% url 'contact' %}">About Us</a>
+          </li>
+          <li class="mb-2">
+            <a href="{% url 'order_history' %}">Orders</a>
+          </li>
+        </ul>
+      </div>
+      <hr class="clearfix w-100 d-md-none" />
+      <div class="col-md-3 mx-auto mt-3 mt-md-0 mb-0 mb-md-4">
+        <h5>Contacts</h5>
+        <hr class="color-primary mb-4 mt-0 d-inline-block mx-auto w-60" />
+
+        <ul class="fa-ul foot-desc ml-4">
+          <li class="mb-2">
+            <span class="fa-li"><i class="far fa-map"></i></span>Andhra Pradesh,
+            India
+          </li>
+          <li class="mb-2">
+            <span class="fa-li"><i class="fas fa-phone-alt"></i></span>+91 98765
+            43210
+          </li>
+          <li class="mb-2">
+            <span class="fa-li"><i class="far fa-envelope"></i></span
+            >codingnoob0@gmail.com
+          </li>
+          <li>
+            <span class="fa-li"><i class="far fa-clock"></i></span>Open Timings
+            : 24/7
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="footer-copyright text-center py-3">
+    <p class="mb-0">© 2020 Copyright : codingnoob0@gmail.com</p>
+  </div>
+</footer>

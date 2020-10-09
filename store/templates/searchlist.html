@@ -1,0 +1,39 @@
+{% extends 'search.html'%} {% block search-content %}
+<!-- prettier-ignore -->
+{% for product in products%}
+<div class="row mb-4">
+  <div class="col-md-5 col-lg-3 col-xl-3">
+    <a
+      href="{{product.get_url}}"
+      style="cursor: pointer"
+      class="view zoom overlay z-depth-1 rounded mb-3 mb-md-0"
+    >
+      <img class="img-fluid w-100" src="{{product.image.url}}" alt="Sample" />
+    </a>
+  </div>
+  <div class="col-md-7 col-lg-9 col-xl-9">
+    <div class="row">
+      <div class="col-lg-7 col-xl-8">
+        <a href="{{product.get_url}}"><h5>{{product.name}}</h5></a>
+        <hr style="margin-top: 0px; margin-bottom: 7px" />
+        <p class="mb-lg-0">{{product.description|slice:":160"}}....</p>
+      </div>
+      <div class="col-lg-5 col-xl-4">
+        <h6 class="mb-4"><span>{{product.price}}</span></h6>
+        <div class="my-2 d-flex flex-column">
+          <a
+            href="{% url 'add_cart' product.id %}"
+            type="button"
+            class="btn btn-primary btn-md mb-2"
+            ><i class="fas fa-shopping-cart pr-2"></i>Add to cart</a
+          >
+          <button type="button" class="btn btn-danger btn-md">
+            <i class="far fa-heart"></i>Add to wishlist
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<hr class="my-4" />
+{% endfor %} {%endblock%}

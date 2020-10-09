@@ -1,0 +1,50 @@
+{% extends 'base.html' %} {% load static %} {% block title %}
+<h1>Home</h1>
+{% endblock title %} {% block content %}
+<section class="container mt-5">
+  <div class="row">
+    {% for product in products %}
+    <div class="col-xl-3 col-md-4 col-sm-6 mb-5">
+      <div class="card">
+        <a
+          href="{{product.get_url}}"
+          style="cursor: pointer"
+          class="view zoom overlay"
+        >
+          <img
+            class="img-fluid home-image"
+            src="{{product.image.url}}"
+            alt="Sample"
+          />
+        </a>
+
+        <div class="card-body text-center pt-4">
+          <h5>{{product.name}}</h5>
+          <p class="mb-2 text-muted text-uppercase small">
+            {{product.category.name}}
+          </p>
+          <hr />
+          <p>
+            <span class="mr-1"><strong><span class="rupee">&#x20B9</span>{{product.price}}</strong></span>
+          </p>
+          <a href="{% url 'change_cart' product.id %}?addQuantity=1">
+            <button class="btn btn-primary btn-sm mr-1 mb-2">
+              <i class="fas fa-shopping-cart pr-2"></i>Add to cart
+            </button>
+          </a>
+          <button
+            type="button"
+            class="btn btn-danger btn-sm px-3 mb-2 material-tooltip-main"
+            data-toggle="tooltip"
+            data-placement="top"
+            title="Add to wishlist"
+          >
+            <i class="far fa-heart"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</section>
+{% endblock content %}

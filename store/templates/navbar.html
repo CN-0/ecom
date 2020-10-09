@@ -1,0 +1,277 @@
+<nav class="navbar navbar-expand-lg sticky-top navbar-light">
+  <div class="container-xl px-3 py-1">
+    <div class="mt-1 mr-lg-5 mt-lg-0">
+      <a href="{% url 'home' %}">
+        <img
+          src="https://mdbootstrap.com/img/logo/mdb-transaprent-noshadows.png"
+          height="35"
+        />
+      </a>
+    </div>
+    <button
+      class="navbar-toggler"
+      type="button"
+      data-toggle="collapse"
+      data-target="#basicExampleNav1"
+      aria-controls="basicExampleNav1"
+      aria-expanded="false"
+      aria-label="Toggle navigation"
+    >
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="basicExampleNav1">
+      <ul style="width: 100%" class="navbar-nav justify-content-between">
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#"
+            >Categories
+          </a>
+          <div style="min-width: unset" class="dropdown-menu">
+            {% for link in links %}
+            <a
+              class="dropdown-item"
+              style="font-size: 16px"
+              href="{{link.get_url}}"
+              >{{link.name}}</a
+            >
+            {% endfor %}
+          </div>
+        </li>
+        <li class="nav-item col-md-7 col-lg-5 col-xl-6">
+          <form action="{% url 'search' %}" method="get">
+            <div class="md-form md-outline input-group md-input-group w-100">
+              <div class="select-outline">
+                <select
+                  name="select"
+                  class="mdb-select md-form md-outline my-0"
+                >
+                  <option value="all">All</option>
+                  {% for link in links %}
+                  <option value="{{link.name|lower}}">{{link.name}}</option>
+                  {% endfor %}
+                </select>
+              </div>
+
+              <input
+                type="text"
+                class="form-control mb-0"
+                name="searchterm"
+                placeholder="Search"
+                required
+              />
+
+              <div class="input-group-append">
+                <button class="btn btn-primary btn-md px-3" type="submit">
+                  <i class="fa fa-search"></i> Search
+                </button>
+              </div>
+            </div>
+          </form>
+        </li>
+        <li class="d-flex align-items-center">
+          {% if user.is_authenticated %}
+          <div class="mr-3">
+            <a
+              href="{% url 'order_history' %}"
+              role="button"
+              data-toggle="tooltip"
+              data-placement="top"
+              title="Orders"
+              class="material-tooltip-main"
+            >
+              <div>
+                <i class="fas fa-store fa-lg text-muted"></i>
+              </div>
+            </a>
+          </div>
+          {% endif %}
+          <div class="mr-3">
+            <a
+              href="{% url 'cart_page' %}"
+              role="button"
+              data-toggle="tooltip"
+              data-placement="top"
+              title="Cart"
+              class="material-tooltip-main"
+            >
+              <div>
+                <i class="fas fa-shopping-cart fa-lg text-muted"></i>
+              </div>
+            </a>
+          </div>
+          {% if user.is_authenticated %}
+          <div class="mr-0">
+            <a href="" role="button">
+              <div>
+                <i class="fas fa-user fa-lg text-muted"></i>
+              </div>
+            </a>
+          </div>
+          <div class="nav-item pl-2 ml-3 mb-1">
+            <a href="{% url 'signout' %}">
+              <button
+                type="button"
+                class="btn btn-outline-info btn-md btn-rounded btn-navbar waves-effect waves-light"
+              >
+                Logout
+              </button>
+            </a>
+          </div>
+          {% endif %} {% if not user.is_authenticated %}
+          <div class="nav-item pl-2 mb-1">
+            <button
+              type="button"
+              data-toggle="modal"
+              data-target="#modalLoginRegister"
+              class="btn btn-outline-info btn-md btn-rounded btn-navbar waves-effect waves-light"
+            >
+              Authenticate
+            </button>
+          </div>
+          {% endif %}
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<section>
+  <div
+    class="modal fade show"
+    id="modalLoginRegister"
+    tabindex="-1"
+    role="dialog"
+    aria-modal="true"
+  >
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-body">
+          <ul class="nav md-pills nav-justified pills-primary">
+            <li class="nav-item">
+              <a
+                class="nav-link border border-primary border-rounded active show"
+                data-toggle="tab"
+                href="#modalLoginRegister-login"
+                role="tab"
+                aria-selected="true"
+                >Login</a
+              >
+            </li>
+            <li class="nav-item">
+              <a
+                class="nav-link border border-primary border-rounded"
+                data-toggle="tab"
+                href="#modalLoginRegister-register"
+                role="tab"
+                aria-selected="false"
+                >Register</a
+              >
+            </li>
+          </ul>
+
+          <!-- Content -->
+          <div class="tab-content py-0">
+            <!-- First panel -->
+            <div
+              class="tab-pane fade in show active"
+              id="modalLoginRegister-login"
+              role="tabpanel"
+            >
+              <form
+                id="formLoginRegister-login"
+                class="pt-2"
+                action="{% url 'signin' %}"
+                method="post"
+              >
+                {% csrf_token %} {% for field in loginForm %}
+                <div class="md-form md-outline">
+                  {{ field }}
+                  <label
+                    for="{{ field.id_for_label }}"
+                    data-error="field.errors"
+                    data-success="!field.errors"
+                    >{{ field.html_name }}</label
+                  >
+                </div>
+                {% endfor %}
+                <div class="text-center mt-4 pt-3">
+                  <button
+                    type="button"
+                    class="btn btn-outline-primary mr-1 mb-2 waves-effect waves-light"
+                  >
+                    Forgot password?
+                  </button>
+                  <button type="submit" class="btn btn-primary mb-2">
+                    Login
+                  </button>
+                </div>
+              </form>
+              <!-- Login form -->
+            </div>
+            <!-- First panel -->
+
+            <!-- Second panel -->
+            <div
+              class="tab-pane fade"
+              id="modalLoginRegister-register"
+              role="tabpanel"
+            >
+              <!-- Register form -->
+              <form
+                id="formLoginRegister-register"
+                class="pt-2"
+                action="{% url 'signup' %}"
+                method="post"
+              >
+                {% csrf_token %} {% for field in signupForm %}
+                <div class="md-form md-outline">
+                  {{ field }}
+                  <label
+                    for="{{ field.id_for_label }}"
+                    data-error="field.errors"
+                    data-success="!field.errors"
+                    >{{ field.html_name }}</label
+                  >
+                </div>
+                {% endfor %}
+                <div class="form-check mt-4 mb-3 pl-0 text-left">
+                  <input
+                    type="checkbox"
+                    class="form-check-input filled-in"
+                    id="formLoginRegister-newsletter"
+                    name="newsletter"
+                  />
+                  <label
+                    class="form-check-label small grey-text"
+                    for="formLoginRegister-newsletter"
+                  >
+                    I agree to sign up for account notifications and newsletter
+                  </label>
+                </div>
+
+                <div class="text-center">
+                  <p class="small grey-text mb-4">
+                    Lorem ipsum dolor sit amet
+                    <a target="_blank" href="#!">Privacy Policy</a>.
+                  </p>
+                  <button type="submit" class="btn btn-primary my-2">
+                    Sign up
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button
+            type="button"
+            class="btn btn-outline-primary waves-effect waves-light"
+            data-dismiss="modal"
+          >
+            Close
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

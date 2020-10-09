@@ -1,0 +1,271 @@
+{% extends 'base.html' %} {% load static %} {% block title %} Checkout
+{%endblock%} {% block content %}
+<!-- Main layout -->
+<main>
+
+  <div class="container">
+
+    <div class="row">
+      <div class="con mt-3 mb-4">
+        <section class="border p-4">
+          <!-- Section: Filters -->
+
+            <h5 class="mb-4">Filters</h5>
+            <section class="mb-4">
+              <h6 class="font-weight-bold mb-3">Avg. Customer Review</h6>
+
+              <a href="{% url 'search-params' %}?rating=4">
+                <ul class="rating">
+                  <li>
+                    <i class="fas fa-star fa-sm text-primary"></i>
+                  </li>
+                  <li>
+                    <i class="fas fa-star fa-sm text-primary"></i>
+                  </li>
+                  <li>
+                    <i class="fas fa-star fa-sm text-primary"></i>
+                  </li>
+                  <li>
+                    <i class="fas fa-star fa-sm text-primary"></i>
+                  </li>
+                  <li>
+                    <i class="far fa-star fa-sm text-primary"></i>
+                  </li>
+                  <li>
+                    <p class="small text-uppercase card-link-secondary px-2">& Up</p>
+                  </li>
+                </ul>
+              </a>
+              <a href="{% url 'search-params' %}?rating=3">
+                <ul class="rating">
+                  <li>
+                    <i class="fas fa-star fa-sm text-primary"></i>
+                  </li>
+                  <li>
+                    <i class="fas fa-star fa-sm text-primary"></i>
+                  </li>
+                  <li>
+                    <i class="fas fa-star fa-sm text-primary"></i>
+                  </li>
+                  <li>
+                    <i class="far fa-star fa-sm text-primary"></i>
+                  </li>
+                  <li>
+                    <i class="far fa-star fa-sm text-primary"></i>
+                  </li>
+                  <li>
+                    <p class="small text-uppercase card-link-secondary px-2">& Up</p>
+                  </li>
+                </ul>
+              </a>
+              <a href="{% url 'search-params' %}?rating=2">
+                <ul class="rating">
+                  <li>
+                    <i class="fas fa-star fa-sm text-primary"></i>
+                  </li>
+                  <li>
+                    <i class="fas fa-star fa-sm text-primary"></i>
+                  </li>
+                  <li>
+                    <i class="far fa-star fa-sm text-primary"></i>
+                  </li>
+                  <li>
+                    <i class="far fa-star fa-sm text-primary"></i>
+                  </li>
+                  <li>
+                    <i class="far fa-star fa-sm text-primary"></i>
+                  </li>
+                  <li>
+                    <p class="small text-uppercase card-link-secondary px-2">& Up</p>
+                  </li>
+                </ul>
+              </a>
+              <a href="{% url 'search-params' %}?rating=1">
+                <ul class="rating">
+                  <li>
+                    <i class="fas fa-star fa-sm text-primary"></i>
+                  </li>
+                  <li>
+                    <i class="far fa-star fa-sm text-primary"></i>
+                  </li>
+                  <li>
+                    <i class="far fa-star fa-sm text-primary"></i>
+                  </li>
+                  <li>
+                    <i class="far fa-star fa-sm text-primary"></i>
+                  </li>
+                  <li>
+                    <i class="far fa-star fa-sm text-primary"></i>
+                  </li>
+                  <li>
+                    <p class="small text-uppercase card-link-secondary px-2">& Up</p>
+                  </li>
+                </ul>
+              </a>
+            </section>
+
+            <div class="mb-4">
+              <h6 class="font-weight-bold mb-3">Price</h6>
+              <form onchange="radioChanged()" id="radio-form" action="{% url 'search-params' %}" method="get" >
+                <div class="form-check pl-0 mb-3">
+                  <input
+                    type="radio"
+                    class="form-check-input"
+                    id="r1"
+                    name="price"
+                    value="1"
+                    {% if active_radio == '1' %}checked{% endif %}
+                  />
+                  <label
+                    class="form-check-label small text-uppercase card-link-secondary"
+                    for="r1"
+                    >{{min_price}} - {{price1}}</label
+                  >
+                </div>
+                <div class="form-check pl-0 mb-3">
+                  <input
+                    type="radio"
+                    class="form-check-input"
+                    id="r2"
+                    value="2"
+                    name="price"
+                    {% if active_radio == '2' %}checked{% endif %}
+                  />
+                  <label
+                    class="form-check-label small text-uppercase card-link-secondary"
+                    for="r2"
+                    >{{price1}} - {{price2}}</label
+                  >
+                </div>
+                <div class="form-check pl-0 mb-3">
+                  <input
+                    type="radio"
+                    class="form-check-input"
+                    id="r3"
+                    name="price"
+                    value="3"
+                    {% if active_radio == '3' %}checked{% endif %}
+                  />
+                  <label
+                    class="form-check-label small text-uppercase card-link-secondary"
+                    for="r3"
+                    >{{price2}} - {{price3}}</label
+                  >
+                </div>
+                <div class="form-check pl-0 mb-3">
+                  <input
+                    type="radio"
+                    class="form-check-input"
+                    id="r4"
+                    name="price"
+                    value="4"
+                    {% if active_radio == '4' %}checked{% endif %}
+                  />
+                  <label
+                    class="form-check-label small text-uppercase card-link-secondary"
+                    for="r4"
+                    >{{price3}} - {{price4}}</label
+                  >
+                </div>
+                <div class="form-check pl-0 mb-3">
+                  <input
+                    type="radio"
+                    class="form-check-input"
+                    id="r5"
+                    name="price"
+                    value="5"
+                    {% if active_radio == '5' %}checked{% endif %}
+                  />
+                  <label
+                    class="form-check-label small text-uppercase card-link-secondary"
+                    for="r5"
+                    >{{price4}} - {{max_price}}</label
+                  >
+                </div>
+              </form>
+              
+              <form id="price-form" action="{% url 'search-params' %}" method="get">
+                <div class="d-flex align-items-center mt-4 pb-1">
+                  <div class="md-form md-outline my-0" style="width: 100px;">
+                    <input id="from" type="text" name="min" required class="form-control mb-0" />
+                    <label for="form">Min</label>
+                  </div>
+                  <p class="px-2 mb-0 text-muted">-</p>
+                  <div class="md-form md-outline my-0" style="width: 100px;">
+                    <input id="to" type="text" name="max" required class="form-control mb-0" />
+                    <label for="to">Max</label>
+                  </div>
+                  <button style="width: 50px;height: 36px;margin-left: 10px;" type="submit" class="btn btn-outline-primary p-2">Go</button>
+                </div>
+              </form>
+            </div>
+            <!-- Section: Price -->
+          <!-- Section: Filters -->
+        </section>
+      </div>
+      <div class="col-lg-8">
+
+        <!-- Section: Block Content -->
+        <section>
+
+          <div class="row d-flex justify-content-around align-items-center mb-4">
+            <div class="col-12 col-md-3 text-center text-md-left">
+              <a href="{% url 'search-params' %}?view=box" class="text-reset"><i class="fas fa-th-large fa-lg mr-1"></i></a href="#!">
+              <a href="{% url 'search-params' %}?view=list" class="text-reset"><i class="fas fa-th-list fa-lg"></i></a href="#!">
+            </div>
+            <div class="col-12 col-md-5">
+              <div class="d-flex flex-wrap">
+                <form id="orderby-form" action="{% url 'search-params' %}" method="get"  class="select-outline position-relative w-100">
+                  <select id="orderby" name="orderby" class="mdb-select md-outline md-form">
+                    <option value="" {% if focus == '0' %} selected {% endif %}>Sort by</option>
+                    <option value="pricelh" {% if focus == '1' %} selected {% endif %}>Price: lowest to highest</option>
+                    <option value="pricehl" {% if focus == '2' %} selected {% endif %}>Price: highest to lowest</option>
+                    <option value="newest" {% if focus == '3' %} selected {% endif %}>Newest</option>
+                    <option value="oldest" {% if focus == '4' %} selected {% endif %}>Oldest</option>
+                  </select>
+                  <label>Sorting</label>
+                </form>
+              </div>
+            </div>
+            {% if products.paginator.num_pages > 1 %}
+            <div class="col-12 col-md-4 text-center">
+              <nav id="paginator" pages={{products.paginator.num_pages}} page={{products.number}} aria-label="Page navigation example">
+                <ul class="pagination pagination-circle justify-content-center float-md-right mb-0">
+                  {% for page_number in products.paginator.page_range %}
+                  <li id={{page_number}} class="page-item {% if products.number == page_number %}active{% endif %}"><a href="{% url 'search-params' %}?page={{page_number}}" class="page-link">{{page_number}}</a></li>                 
+                  {% endfor %}
+                </ul>
+              </nav>
+            </div>
+            {% endif %}
+          </div>
+        </section>
+        <section>
+            {% block search-content %}
+            {% endblock %}
+        </section>
+    
+      </div>
+    </div>
+
+  </div>
+
+</main>
+<!-- Main layout -->
+<section class="container-md pt-4">
+</section>
+<script>
+  document.getElementById("orderby").addEventListener("change",()=>{
+    document.getElementById("orderby-form").submit()
+  })
+</script>
+<script>
+  function radioChanged(){
+    document.getElementById("radio-form").submit()
+  }
+</script>
+{%endblock%}
+
+<!-- $('input[type=radio]').on('change', function() {
+  $(this).closest("form").submit();
+}); -->

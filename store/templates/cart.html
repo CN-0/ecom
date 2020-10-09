@@ -19,18 +19,22 @@
           <div class="row mb-4">
             <div class="col-md-5 col-lg-3 col-xl-3">
               <div class="view zoom overlay z-depth-1 rounded mb-3 mb-md-0">
-                <img
+                <a href="{{cart_item.product.get_url}}">
+                  <img
                   class="img-fluid w-100"
                   src="{{cart_item.product.image.url}}"
                   alt="Sample"
                 />
+                </a>
               </div>
             </div>
             <div class="col-md-7 col-lg-9 col-xl-9">
               <div>
                 <div class="d-flex justify-content-between">
                   <div>
-                    <h5>{{cart_item.product.name}}</h5>
+                    <a href="{{cart_item.product.get_url}}">
+                      <h5>{{cart_item.product.name}}</h5>
+                    </a>
                     <p class="mb-2 text-muted text-uppercase small">
                       {{cart_item.product.category.name}} |
                       {{cart_item.product.company.name}}
@@ -85,7 +89,7 @@
                       ><i class="fas fa-trash-alt mr-1"></i> Remove item
                     </a>
                     <a
-                      href="#!"
+                      {% if user.is_authenticated %}href="{% url 'change_wishlist' 'add' cart_item.product.id %}"{% endif %}
                       type="button"
                       class="card-link-secondary small text-uppercase"
                       ><i class="fas fa-heart mr-1"></i> Move to wish list

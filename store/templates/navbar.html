@@ -45,13 +45,12 @@
                   name="select"
                   class="mdb-select md-form md-outline my-0"
                 >
-                  <option value="all">All</option>
-                  {% for link in links %}
-                  <option value="{{link.name|lower}}">{{link.name}}</option>
-                  {% endfor %}
+                <option value="all">All</option>
+                {% for link in links %}
+                <option value="{{link.name|lower}}">{{link.name}}</option>
+                {% endfor %} 
                 </select>
               </div>
-
               <input
                 type="text"
                 class="form-control mb-0"
@@ -85,7 +84,7 @@
             </a>
           </div>
           {% endif %}
-          <div class="mr-3">
+          <div class="mr-3 ml-2">
             <a
               href="{% url 'cart_page' %}"
               role="button"
@@ -100,12 +99,18 @@
             </a>
           </div>
           {% if user.is_authenticated %}
-          <div class="mr-0">
-            <a href="" role="button">
-              <div>
-                <i class="fas fa-user fa-lg text-muted"></i>
-              </div>
+          <div class="nav-item dropdown">
+            <a class="nav-link" data-toggle="dropdown"
+              ><i class="fas fa-user fa-lg text-muted"></i>
             </a>
+            <div style="min-width: unset" class="dropdown-menu">
+              <a
+                class="dropdown-item"
+                style="font-size: 16px; margin: 0px 4px;"
+                href="{% url 'wishlist' %}"
+                >Wishlist</a
+              >
+            </div>
           </div>
           <div class="nav-item pl-2 ml-3 mb-1">
             <a href="{% url 'signout' %}">

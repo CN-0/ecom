@@ -1,6 +1,6 @@
 from django.shortcuts import render, get_object_or_404, redirect, reverse, HttpResponseRedirect
 from django.http import HttpResponse, JsonResponse
-from .models import Category, Company, Product, Cart, CartItem, ShippingDetails, Order, OrderItem, Review, Contact
+from .models import Category, Company, Product, Cart, CartItem, ShippingDetails, Order, OrderItem, Review, Contact, Wishlist
 from .forms import SignUpForm, LoginForm, CheckoutForm
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.models import User, Group
@@ -30,12 +30,13 @@ def productPage(request, category_slug, product_slug):
     try:
         product = Product.objects.get(
             category__slug=category_slug, slug=product_slug)
-        order_item = OrderItem.objects.all().filter(product=product,
-                                                    order__email=request.user.email)
-        if order_item.count() > 0:
-            is_reviewed = Review.objects.all().filter(product=product, user=request.user)
-            if not is_reviewed.count() > 0:
-                can_review = True
+        if request.user.is_authenticated:
+            order_item = OrderItem.objects.all().filter(product=product,
+                                                        order__email=request.user.email)
+            if order_item.count() > 0:
+                is_reviewed = Review.objects.all().filter(product=product, user=request.user)
+                if not is_reviewed.count() > 0:
+                    can_review = True
     except Exception as e:
         raise e
 
@@ -468,3 +469,30 @@ def contact(request):
             name=name, email=email, message=message)
         contact.save()
     return render(request, 'contact.html')
+
+
+def change_wishlist(request, type, product_id):
+    if type == 'add' and request.user.is_authenticated:
+        product = Product.objects.get(id=product_id)
+        wishlist = Wishlist.objects.get_or_create(
+            product=product, user=request.user)
+    if type == 'remove' and request.user.is_authenticated:
+        product = Product.objects.get(id=product_id)
+        wishlist = Wishlist.objects.get(
+            product=product, user=request.user)
+        wishlist.delete()
+
+    wishlist_items = Wishlist.objects.filter(user=request.user)
+    products = []
+    for item in wishlist_items:
+        products.append(item.product)
+    return render(request, 'home.html', {'products': products, 'wishlist': True})
+
+
+@login_required(redirect_field_name='next', login_url='home')
+def wishlistPage(request):
+    wishlist_items = Wishlist.objects.filter(user=request.user)
+    products = []
+    for item in wishlist_items:
+        products.append(item.product)
+    return render(request, 'home.html', {'products': products, 'wishlist': True})

@@ -15,7 +15,7 @@
         <h5>{{product.name}}</h5>
         <h6 class="mb-3">{{product.price}}</h6>
         <a
-          href="{% url 'add_cart' product.id %}"
+          href="{% url 'change_cart' product.id %}?addQuantity=1"
           type="button"
           class="btn btn-primary btn-sm mr-1"
           ><i class="fas fa-shopping-cart pr-2"></i>Add to cart</a

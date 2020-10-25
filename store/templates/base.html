@@ -22,7 +22,19 @@
   </head>
   <body class="skin-light">
     <div class="page-container">
-      {% include 'navbar.html' %} {% block content %} {% endblock content %}
+      {% include 'navbar.html' %}    
+      {% if messages %}
+        <ul class="messages">
+          
+            {% for message in messages %}
+            <div {% if message.tags %} class="alert alert-{{ message.tags }} my-alert" {% else %} class="alert alert-dark my-alert" {% endif %}>
+              <button type="button" class="close" data-dismiss="alert">x</button>
+              {{message}}
+            </div>
+            {% endfor %}
+        </ul>
+        {% endif %}
+      {% block content %} {% endblock content %}
     </div>
     {%include 'footer.html' %}
     <script src="https://polyfill.io/v3/polyfill.min.js?version=3.52.1&features=fetch"></script>
@@ -100,13 +112,13 @@
           }
         );
       });
-
-      // Data Picker Initialization
-      $(".datepicker").pickadate();
-
-      // Time Picker Initialization
-      $("#input_starttime").pickatime({});
     </script>
+    <script>
+      $(".my-alert").fadeTo(2000, 500).slideUp(500, function(){
+        $(".my-alert").slideUp(500);
+    });
+    </script>
+    
   </body>
 </html>
 <!DOCTYPE html>

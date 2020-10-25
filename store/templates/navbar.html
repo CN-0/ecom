@@ -1,3 +1,4 @@
+{% load static %}
 <nav class="navbar navbar-expand-lg sticky-top navbar-light">
   <div class="container-xl px-3 py-1">
     <div class="mt-1 mr-lg-5 mt-lg-0">
@@ -106,9 +107,18 @@
             <div style="min-width: unset" class="dropdown-menu">
               <a
                 class="dropdown-item"
-                style="font-size: 16px; margin: 0px 4px;"
+                style="font-size: 16px;"
                 href="{% url 'wishlist' %}"
                 >Wishlist</a
+              >
+              <a
+                class="dropdown-item"
+                style="font-size: 16px;"
+                data-toggle="modal"
+                data-target="#modalChangePassword"
+                >
+                Change Password
+              </a
               >
             </div>
           </div>
@@ -141,6 +151,34 @@
 </nav>
 
 <section>
+  <div class="modal fade" id="modalChangePassword" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <form class="modal-content" action="{% url 'changePassword' %}"
+      method="post">
+      {% csrf_token %}
+        <div class="modal-header">
+          <h5 class="modal-title mx-auto">Change Password</h5>
+          <button type="button" class="close ml-0" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="md-form md-outline">
+            <input name="pass1" type="text" id="modalChangePassword-pass1" class="form-control" required>
+            <label data-error="right" data-success="wrong" for="modalChangePassword-pass1">Old Password</label>
+          </div>
+          <div class="md-form md-outline">
+            <input name="pass2" type="text" id="modalChangePassword-pass2" class="form-control" required>
+            <label data-error="wrong" data-success="right" for="modalChangePassword-pass2">New Password</label>
+          </div>
+        </div>
+        <div class="modal-footer d-flex justify-content-center">
+          <button type="submit" class="btn btn-primary">Change Password</button>
+        </div>
+      </form>
+    </div>
+  </div>
   <div
     class="modal fade show"
     id="modalLoginRegister"
@@ -199,13 +237,7 @@
                   >
                 </div>
                 {% endfor %}
-                <div class="text-center mt-4 pt-3">
-                  <button
-                    type="button"
-                    class="btn btn-outline-primary mr-1 mb-2 waves-effect waves-light"
-                  >
-                    Forgot password?
-                  </button>
+                <div class="text-center">
                   <button type="submit" class="btn btn-primary mb-2">
                     Login
                   </button>
@@ -233,33 +265,17 @@
                   {{ field }}
                   <label
                     for="{{ field.id_for_label }}"
-                    data-error="field.errors"
-                    data-success="!field.errors"
-                    >{{ field.html_name }}</label
+                    >{{ field.label }}</label
                   >
+                  {% if field.help_text %}
+                    <p style="font-size:12px; color: grey; margin-bottom: -10px;">{{field.help_text}}</p>
+                  {% endif %}
                 </div>
                 {% endfor %}
-                <div class="form-check mt-4 mb-3 pl-0 text-left">
-                  <input
-                    type="checkbox"
-                    class="form-check-input filled-in"
-                    id="formLoginRegister-newsletter"
-                    name="newsletter"
-                  />
-                  <label
-                    class="form-check-label small grey-text"
-                    for="formLoginRegister-newsletter"
-                  >
-                    I agree to sign up for account notifications and newsletter
-                  </label>
-                </div>
 
                 <div class="text-center">
-                  <p class="small grey-text mb-4">
-                    Lorem ipsum dolor sit amet
-                    <a target="_blank" href="#!">Privacy Policy</a>.
-                  </p>
-                  <button type="submit" class="btn btn-primary my-2">
+                  <input id="submit_handle" type="submit" style="display: none">
+                  <button id="signupBtn" type="button" class="btn btn-primary">
                     Sign up
                   </button>
                 </div>
@@ -279,4 +295,30 @@
       </div>
     </div>
   </div>
+  <script
+      type="text/javascript"
+      src="{% static 'js/jquery-3.4.1.min.js' %}"
+    ></script>
+  <script>
+    $("#signupBtn").click(function () {
+      let pass1 = $("#formLoginRegister-password-example").val()
+      let pass2 = $("#formLoginRegister-password-repeat").val()
+      
+      if(pass1.length < 8){
+        if ($('#len').length === 0) {
+          $("#formLoginRegister-password-example").after("<p id=len><small>Password length is less than 8characters </small></p>");
+          $("#len").addClass("err-text")
+        }
+      }else if(pass1 !== pass2){
+        if ($('#unequal').length === 0) {
+          $("#formLoginRegister-password-repeat").after("<p id=unequal><small>Passwords doesn't match</small></p>");
+          $("#unequal").addClass("err-text")
+        }
+      }else{        
+        $( ".err-text" ).remove();
+        $('#submit_handle').click();
+      }
+    })
+
+  </script>
 </section>

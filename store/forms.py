@@ -7,15 +7,15 @@ from .models import ShippingDetails
 
 
 class SignUpForm(UserCreationForm):
-    email = forms.EmailField(widget=forms.EmailInput(
+    email = forms.EmailField(label='email', widget=forms.EmailInput(
         attrs={'class': 'form-control', 'id': 'formLoginRegister-email-example', 'type': 'email', 'required': True}))
-    username = UsernameField(
-        widget=forms.TextInput(
-            attrs={'class': 'form-control', 'id': 'formLoginRegister-username-example', 'type': 'text', 'required': True})
-    )
-    password1 = forms.CharField(widget=forms.PasswordInput(
+    username = UsernameField(label='username',
+                             widget=forms.TextInput(
+                                 attrs={'class': 'form-control', 'id': 'formLoginRegister-username-example', 'type': 'text', 'required': True})
+                             )
+    password1 = forms.CharField(label='password', help_text='Your Password must contain atleast 8 characters & they can\'t be entirely numeric', widget=forms.PasswordInput(
         attrs={'class': 'form-control', 'id': 'formLoginRegister-password-example', 'type': 'password', 'required': True}))
-    password2 = forms.CharField(widget=forms.PasswordInput(
+    password2 = forms.CharField(label='confirm password', widget=forms.PasswordInput(
         attrs={'class': 'form-control', 'id': 'formLoginRegister-password-repeat', 'type': 'password', 'required': True}))
 
     class Meta:

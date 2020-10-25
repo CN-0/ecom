@@ -6,6 +6,7 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.models import User, Group
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.decorators import login_required
+from django.contrib import messages
 import stripe
 from django.conf import settings
 from django.views.decorators.csrf import csrf_exempt
@@ -14,6 +15,7 @@ from urllib.parse import parse_qs, urlencode, urlsplit, urlunsplit
 from django.core.paginator import Paginator, EmptyPage, InvalidPage
 from django.db.models import Max, Min, Avg
 from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
+from django.contrib.auth.hashers import check_password
 
 
 def home(request, category_slug=None):
@@ -38,7 +40,7 @@ def productPage(request, category_slug, product_slug):
                 if not is_reviewed.count() > 0:
                     can_review = True
     except Exception as e:
-        raise e
+        messages.error(request, 'Invalid details!!')
 
     if request.method == 'POST' and request.user.is_authenticated and request.POST['content'].strip() != '':
         rating = int(request.POST['rating'])
@@ -87,12 +89,17 @@ def change_cart(request, product_id):
                 if cart_item.quantity+addQuantity <= cart_item.product.stock:
                     cart_item.quantity += addQuantity
                     cart_item.save()
+                    messages.success(
+                        request, 'Item added to cart Succesfully!!')
             else:
                 if cart_item.quantity-subQuantity >= 1:
                     cart_item.quantity -= subQuantity
                     cart_item.save()
+                    messages.success(
+                        request, 'Item removed from cart Succesfully!!')
                 else:
                     cart_item.delete()
+                    messages.success(request, 'Item deleted Succesfully!!')
         except CartItem.DoesNotExist:
             if addQuantity <= product.stock:
                 cart_item = CartItem.objects.create(
@@ -111,7 +118,7 @@ def cartPage(request, total=0, counter=0, cart_items=None, shipping_address=None
         shipping_address = ShippingDetails.objects.filter(
             user=request.user).first()
     except Exception as e:
-        print(e)
+        messages.error(request, 'cart is invalid!!')
     return render(request, 'cart.html', dict(cart_items=cart_items, total=total, counter=counter, shipping_address=shipping_address))
 
 
@@ -125,9 +132,11 @@ def signupView(request):
             customer_group = Group.objects.get(name='Customer')
             customer_group.user_set.add(signup_user)
             login(request, signup_user)
-    else:
-        form = SignUpForm()
-    return redirect('home')
+            messages.success(request, 'You are registered Succesfully!')
+        else:
+            messages.error(
+                request, 'Signup Form is invalid, plz provide valid inputs!')
+    return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
 
 
 def signinView(request):
@@ -139,16 +148,19 @@ def signinView(request):
             user = authenticate(username=username, password=password)
             if user is not None:
                 login(request, user)
-                return redirect('home')
+                messages.success(request, 'You are logged in Succesfully!')
             else:
-                return redirect('signup')
-    else:
-        form = AuthenticationForm()
-    return redirect('home')
+                messages.error(
+                    request, 'You don\'t have an account! Create a new one!!')
+        else:
+            messages.error(request, 'Please provide valid details!')
+    return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
 
 
+@login_required
 def signoutView(request):
     logout(request)
+    messages.success(request, 'Logged out Succesfully!')
     return redirect('home')
 
 
@@ -161,7 +173,7 @@ def checkoutPage(request):
 def payment(request, total=0, counter=0, cart_items=None, payment_items=None):
     payment_items = []
     if request.method == 'GET':
-        YOUR_DOMAIN = 'http://127.0.0.1:8000'
+        YOUR_DOMAIN = settings.MY_DOMAIN
         stripe.api_key = settings.STRIPE_SECRET_KEY
         try:
             cart = Cart.objects.get(cart_id=_cart_id(request))
@@ -180,7 +192,7 @@ def payment(request, total=0, counter=0, cart_items=None, payment_items=None):
                     'quantity': cart_item.quantity,
                 })
         except ObjectDoesNotExist:
-            pass
+            messages.error(request, 'An error occured during payment!!')
         try:
             checkout_session = stripe.checkout.Session.create(
                 payment_method_types=['card'],
@@ -191,18 +203,10 @@ def payment(request, total=0, counter=0, cart_items=None, payment_items=None):
                 success_url=YOUR_DOMAIN + '/order_history/',
                 cancel_url=YOUR_DOMAIN + '/cart',
             )
-            print("cardid"+str(cart.id))
             return JsonResponse({'id': checkout_session.id, 'key': settings.STRIPE_PUBLISHABLE_KEY})
         except Exception as e:
+            messages.error(request, str(e))
             return JsonResponse({'error': str(e)})
-
-
-def success(request):
-    return render(request, 'success.html')
-
-
-def fail(request):
-    return render(request, 'fail.html')
 
 
 @csrf_exempt
@@ -218,12 +222,9 @@ def stripe_webhook(request):
             payload, sig_header, endpoint_secret
         )
     except ValueError as e:
-        # Invalid payload
-        return HttpResponse(status=400)
+        messages.error(request, "Invalid Payload")
     except stripe.error.SignatureVerificationError as e:
-        # Invalid signature
-        return HttpResponse(status=400)
-    # Handle the checkout.session.completed event
+        messages.error(request, "Invalid Signature")
     if event['type'] == 'checkout.session.completed':
         email = event.data.object.customer_email
         cart_id = event.data.object.client_reference_id
@@ -247,14 +248,13 @@ def stripe_webhook(request):
                     product.available = False
                 product.save()
                 cart_item.delete()
-                print('the order has been created')
+                messages.success(request, "Order has been placed!")
         except ObjectDoesNotExist:
-            pass
-        print(cart_items)
-
+            messages.error(request, "payment is unsuccesfull!!")
     return HttpResponse(status=200)
 
 
+@login_required
 def shippingDetails(request):
     if request.is_ajax and request.method == "POST":
         form = CheckoutForm(request.POST)
@@ -299,7 +299,9 @@ def shippingDetails(request):
                 shipping_details.save()
                 return JsonResponse({"success": "Created SUccesfully"}, status=200)
         else:
+            messages.error(request, form.errors)
             return JsonResponse({"error": form.errors}, status=400)
+    messages.error(request, "Checkout form is invalid!")
     return JsonResponse({"error": "Some error Occured!"}, status=400)
 
 
@@ -468,6 +470,7 @@ def contact(request):
         contact = Contact.objects.create(
             name=name, email=email, message=message)
         contact.save()
+        messages.success(request, 'Contact form was submitted Succesfully!!')
     return render(request, 'contact.html')
 
 
@@ -476,11 +479,13 @@ def change_wishlist(request, type, product_id):
         product = Product.objects.get(id=product_id)
         wishlist = Wishlist.objects.get_or_create(
             product=product, user=request.user)
+        messages.success(request, 'Item added to wishlist Succesfully!')
     if type == 'remove' and request.user.is_authenticated:
         product = Product.objects.get(id=product_id)
         wishlist = Wishlist.objects.get(
             product=product, user=request.user)
         wishlist.delete()
+        messages.success(request, 'Item removed from wishlist Succesfully!')
 
     wishlist_items = Wishlist.objects.filter(user=request.user)
     products = []
@@ -496,3 +501,18 @@ def wishlistPage(request):
     for item in wishlist_items:
         products.append(item.product)
     return render(request, 'home.html', {'products': products, 'wishlist': True})
+
+
+def changePassword(request):
+    if request.method == 'POST':
+        pass1 = request.POST.get('pass1', None)
+        pass2 = request.POST.get('pass2', None)
+        user = request.user
+        if user.check_password(pass1):
+            user.set_password(pass2)
+            user.save()
+            login(request, user)
+            messages.success(request, 'Password changed Succesfully!!')
+        else:
+            messages.error(request, 'old password is wrong!!')
+    return HttpResponseRedirect(reverse('home'))

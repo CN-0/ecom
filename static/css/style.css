@@ -148,3 +148,28 @@ b {
 .star1 {
   font-size: 1rem !important;
 }
+
+.err-text {
+  color: red;
+}
+
+.messages {
+  position: fixed;
+  z-index: 8000;
+  top: 80px;
+  right: 0px;
+  font-weight: 700;
+  font-size: 14px;
+  letter-spacing: 0.5px;
+  max-width: 300px;
+  word-wrap: break-word;
+}
+
+.my-alert {
+  position: relative;
+  margin-top: 1rem;
+}
+
+.close {
+  margin-left: 15px !important;
+}
